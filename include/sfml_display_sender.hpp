@@ -18,7 +18,7 @@ static auto MakeSfmlDisplaySender(SfmlState &st) {
         time_counter.End();
 
         if (time_counter.Count() % 10 == 0) {
-            std::println("Average display time: {} ms over {} frames", time_counter.GetAvr(), time_counter.Count());
+            std::cout << "Average display time: " << time_counter.GetAvr() <<" ms over " << time_counter.Count() << " frames" << std::endl;
         }
     });
 }

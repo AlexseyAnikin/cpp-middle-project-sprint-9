@@ -26,9 +26,9 @@ inline sf::Color ComputeColor(int iterations, int max_iterations)
 
     const double t = static_cast<double>(iterations) / max_iterations;
 
-    const sf::Uint8 r = static_cast<sf::Uint8>(9 * (1 - t) * t * t * t * 255);
-    const sf::Uint8 g = static_cast<sf::Uint8>(15 * (1 - t) * (1 - t) * t * t * 256);
-    const sf::Uint8 b = static_cast<sf::Uint8>(8.5 * (1 - t) * (1 - t) * (1 - t) * t * 256);
+    const std::uint8_t r = static_cast<std::uint8_t>(9 * (1 - t) * t * t * t * 255);
+    const std::uint8_t g = static_cast<std::uint8_t>(15 * (1 - t) * (1 - t) * t * t * 256);
+    const std::uint8_t b = static_cast<std::uint8_t>(8.5 * (1 - t) * (1 - t) * (1 - t) * t * 256);
 
     return sf::Color(r, g, b);
 }
@@ -45,7 +45,7 @@ inline int ComputePoint(double cx, double cy, int max_iterations, double escape_
         const double xtemp = x * x - y * y + cx;
 
         y = 2.0 * x * y + cy;
-        x = temp;
+        x = xtemp;
 
         ++iteration;
     }
@@ -63,13 +63,13 @@ public:
         RenderSettings settings_;
         ViewPort viewport_;
 
-        std::vector<sf::Uint8> pixels_;
+        std::vector<std::uint8_t> pixels_;
 
         template <typename R>
         OperationState(
             R&& receiver,
             RenderSettings settings,
-            Viewport viewport) : receiver_(std::forward<R>(receiver)),
+            ViewPort viewport) : receiver_(std::forward<R>(receiver)),
                                  settings_(settings),
                                  viewport_(viewport) {} 
 
@@ -83,12 +83,10 @@ public:
                     std::move(receiver_),
                     std::move(pixels_)
                 );
-            }
-            catch (...)
-            {
-                sx::set_error(
+            } catch (...) {
+                ex::set_error(
                     std::move(receiver_),
-                    std::current_exception();
+                    std::current_exception()
                 );
             }
         }
@@ -146,15 +144,15 @@ public:
 
     auto get_completion_signatures() const
     {
-        return ex::complection_signatures<
-            ex::set_value_t(std::vector<sg::Uint8>),
+        return ex::completion_signatures<
+            ex::set_value_t(std::vector<std::uint8_t>),
             ex::set_error_t(std::exception_ptr)
         >{};
     }
 
 private:
     RenderSettings settings_;
-    Viewport viewport_;
+    ViewPort viewport_;
 };
 
 inline auto MakeComputeSender(RenderSettings settings, ViewPort viewport)
