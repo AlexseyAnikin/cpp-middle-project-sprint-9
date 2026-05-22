@@ -15,7 +15,7 @@ endif()
 
 # Ищем необходимые библиотеки
 find_package(GTest REQUIRED)
-find_package(SFML COMPONENTS graphics window system REQUIRED)
+find_package(SFML 3 COMPONENTS Graphics Window System REQUIRED)
 
 include(FetchContent)
 FetchContent_Declare(
