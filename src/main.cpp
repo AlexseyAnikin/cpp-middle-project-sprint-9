@@ -45,7 +45,9 @@ private:
 class MandelbrotApp {
 public:
     MandelbrotApp() : compute_pool_{std::max(1u, std::thread::hardware_concurrency())}, sfml_thread_{1} {
-        std::cout << "hardware_concurrency: {}\n" <<  std::thread::hardware_concurrency() << std::endl;
+        std::cout << "hardware_concurrency: \n" 
+                  <<  std::thread::hardware_concurrency() 
+                  << std::endl;
     }
 
     void Run() {
@@ -77,7 +79,7 @@ public:
 
         ex::then([this]() {
 
-            if (!state_->app_state.need_rerender) {
+            if (state_->app_state.should_exit || !state_->app_state.need_rerender) {
                 return &state_->fb;
             }   
 
@@ -123,14 +125,22 @@ public:
         }) |
 
         ex::continues_on(sfml_sched) |
+        
+        ex::then([this](FrameBuffer* fb) {
+                if (state_->app_state.should_exit) {
+                    return fb;
+                }
+
+        return fb;
+        }) |
 
         render::MakeSfmlDisplaySender(*state_) |
 
-        ex::then(
-            WaitForFPS{
-                state_->frame_clock,
-                60
-            }
+        ex::then([]{}
+            // WaitForFPS
+            //     state_->frame_clock,
+            //     60
+            // }
         );
 
         auto repeated_pipeline = std::move(process_frame) | ex::then([this] { return state_->app_state.should_exit; }) |

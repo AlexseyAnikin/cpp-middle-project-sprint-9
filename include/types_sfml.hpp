@@ -42,20 +42,22 @@ struct SfmlState {
 
     FrameClock frame_clock;
 
-    explicit SfmlState(const RenderSettings &s)
+    explicit SfmlState(const RenderSettings& s)
         : render_settings(s),
-          window(
-            sf::VideoMode{sf::Vector2u{render_settings.width, render_settings.height}}, 
-            "Mandelbrot Fractal"),
-            texture(),
-            sprite(texture),
-            fb(FrameBuffer::Make(render_settings.width, render_settings.height)) {
-
+        window(
+            sf::VideoMode{sf::Vector2u{render_settings.width, render_settings.height}},
+            "Mandelbrot Fractal"
+        ),
+        texture(),
+        sprite(texture),
+        fb(FrameBuffer::Make(render_settings.width, render_settings.height)) {
         window.setKeyRepeatEnabled(false);
+        window.setFramerateLimit(60);
 
-        if(!texture.resize(sf::Vector2u{render_settings.width, render_settings.height}))
-        {
+        if (!texture.resize(sf::Vector2u{render_settings.width, render_settings.height})) {
             throw std::runtime_error("Failed to create SFML texture");
         }
+
+        sprite.setTexture(texture, true);
     }
 };
